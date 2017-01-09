@@ -1,0 +1,12 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+  include module/top
+  body(class ="container")
+    h1
+      a(href='/list') LIST
+    ul
+      each board in boards
+        li
+          a(href='/board/view/'+board.board_no)= board.board_title

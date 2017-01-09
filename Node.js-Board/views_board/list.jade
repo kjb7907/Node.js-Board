@@ -1,0 +1,26 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+  include module/top
+  body(class ="container")
+    h2
+      a(href='/list') LIST
+
+    table(class = "table" style = "width:70%")
+      tr(class="text-left")
+        td(style = "width:50px")
+          b 번호
+        td
+          b 제목
+        td(style = "width:100px")
+          b 작성자
+        td(style = "width:200px")
+          b 작성일
+      each board in boards
+        tr
+          td= board.board_no
+          td
+            a(href='/board/view/'+board.board_no)= board.board_title
+          td= board.board_user
+          td= board.board_date
