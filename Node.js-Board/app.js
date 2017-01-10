@@ -23,13 +23,14 @@ app.get('/board/list', function(req, res){
   console.log('list');
   var currentPage = 1; //현재페이지 할당
   var pagePerRow = 10; //가져올 게시물 수 할당
-  var totalRowCount = 0; //전체게시물 변수 할당
-  var lastPage = 0; //마지막페이지 변수 할당
+  var totalRowCount; //전체게시물 변수 할당
+  var lastPage; //마지막페이지 변수 할당
 
   //넘어오는 페이지수가 있다면 현재페이지에 대입
   if(req.query.currentPage){
-    console.log("currentPage 넘어옴");
+    console.log(req.query.currentPage+" 넘어온 currentPage");
     currentPage = req.query.currentPage;
+
   }
 
 
@@ -39,27 +40,26 @@ app.get('/board/list', function(req, res){
 
     //컬럼명인 COUNT(*)가 특수문자가포함되어 함수로인식되기 때문에 []참조연산 사용
     totalRowCount = count[0]['COUNT(*)'];
-    console.log(totalRowCount+" : 전체게시글 수");
 
-    lastPage = totalRowCount/pagePerRow; //마지막페이지 = 전체글수/한페이지당게시글수
+     lastPage = totalRowCount/pagePerRow; //마지막페이지 = 전체글수/한페이지당게시글수
     if(totalRowCount%pagePerRow !== 0){ //10으로 나누어 떨어지지않는경우 1 추가
       lastPage++;
+      console.log(lastPage+" if.lastPage");
     }
   });
   var beginRow = (currentPage-1)*pagePerRow; //가져올 첫번째 글
-  console.log(beginRow+" beginRow");
+
+  console.log(beginRow + " beginRow");
+
   //글번호 & 글제목 가져오기
-  console.log(currentPage+" currentPage");
-  console.log(pagePerRow+" pagePerRow");
   var sql = 'SELECT board_no,board_title,board_user,+board_date FROM board ORDER BY board_no DESC LIMIT ?, ?';
   conn.query(sql,[beginRow,pagePerRow],function(err, boards, fields){ //쿼리문실행&쿼리문실행후 실행되는 콜백함수
-      console.log("글가져오기");
-      console.log(boards);
       //자바스크립트 date 객체의 toLocaleString() 타입으로 날짜 출력을위해 배열안의 원소 수정
       var date = boards[0].board_date;
       for(var i=0; i < boards.length ; i++){
         boards[i].board_date = date.toLocaleString();
       }
+
       //list에 필요한 객체및 변수 전달
       res.render('list', {boards:boards,currentPage:currentPage,lastPage:lastPage});
   });
