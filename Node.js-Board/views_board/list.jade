@@ -24,3 +24,17 @@ html
             a(href='/board/view/'+board.board_no)= board.board_title
           td= board.board_user
           td= board.board_date
+
+    table(class = "table" style = "width:70%")
+      center(style = "width:70%")
+        if(currentPage>1)
+          span
+            a(href='/board/list?currentPage=#{currentPage-1')
+              button(type = 'button' class="btn btn-default")이전
+        if(currentPage<lastPage-1)    
+          span
+            a(href='/board/list?currentPage=#{currentPage+1}')
+              button(type = 'button' class="btn btn-default")다음
+        span
+          a(href='/board/list')
+            button(type = 'button' class="btn btn-primary")글쓰기

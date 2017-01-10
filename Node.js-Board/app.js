@@ -20,30 +20,48 @@ app.set('view engine', 'jade'); //템플릿엔진 세팅 express 연결
 
 //글목록
 app.get('/board/list', function(req, res){
+  console.log('list');
   var currentPage = 1; //현재페이지 할당
   var pagePerRow = 10; //가져올 게시물 수 할당
   var totalRowCount = 0; //전체게시물 변수 할당
+  var lastPage = 0; //마지막페이지 변수 할당
+
   //넘어오는 페이지수가 있다면 현재페이지에 대입
   if(req.query.currentPage){
+    console.log("currentPage 넘어옴");
     currentPage = req.query.currentPage;
   }
+
 
   //전체 게시물 수 가져오기
   var countSql = "SELECT COUNT(*) FROM board";
   conn.query(countSql,function(err,count,fields){
-    console.log(count); //테스트1
-    console.log(count[0]); //테스트 2
-  //  console.log(count[0].count(*)); //테스트3
-    totalRowCount = count[0];
-    console.log(totalRowCount+" : 전체게시글 수");
-  });
 
+    //컬럼명인 COUNT(*)가 특수문자가포함되어 함수로인식되기 때문에 []참조연산 사용
+    totalRowCount = count[0]['COUNT(*)'];
+    console.log(totalRowCount+" : 전체게시글 수");
+
+    lastPage = totalRowCount/pagePerRow; //마지막페이지 = 전체글수/한페이지당게시글수
+    if(totalRowCount%pagePerRow !== 0){ //10으로 나누어 떨어지지않는경우 1 추가
+      lastPage++;
+    }
+  });
+  var beginRow = (currentPage-1)*pagePerRow; //가져올 첫번째 글
+  console.log(beginRow+" beginRow");
   //글번호 & 글제목 가져오기
-  var sql = 'SELECT board_no,board_title,board_user,board_date FROM board';
-  conn.query(sql, function(err, boards, fields){ //쿼리문실행&쿼리문실행후 실행되는 콜백함수
-      console.log(boards[0].board_date); //테스트 1
-      console.log(boards[0].board_date+" : boards[0].board_date"); //테스트 2
-      res.render('list', {boards:boards}); //전체글만 전달하며 view페이지 렌더링
+  console.log(currentPage+" currentPage");
+  console.log(pagePerRow+" pagePerRow");
+  var sql = 'SELECT board_no,board_title,board_user,+board_date FROM board ORDER BY board_no DESC LIMIT ?, ?';
+  conn.query(sql,[beginRow,pagePerRow],function(err, boards, fields){ //쿼리문실행&쿼리문실행후 실행되는 콜백함수
+      console.log("글가져오기");
+      console.log(boards);
+      //자바스크립트 date 객체의 toLocaleString() 타입으로 날짜 출력을위해 배열안의 원소 수정
+      var date = boards[0].board_date;
+      for(var i=0; i < boards.length ; i++){
+        boards[i].board_date = date.toLocaleString();
+      }
+      //list에 필요한 객체및 변수 전달
+      res.render('list', {boards:boards,currentPage:currentPage,lastPage:lastPage});
   });
 });
 
