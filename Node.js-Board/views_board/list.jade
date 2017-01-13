@@ -4,8 +4,7 @@ html
     meta(charset='utf-8')
   include module/top
   body(class ="container")
-    h2
-      a(href='/board/list') LIST
+    h2 LIST
     현재페이지:#{currentPage}
     table(class = "table" style = "width:70%")
       tr(class="text-left")
@@ -21,7 +20,7 @@ html
         tr
           td= board.board_no
           td
-            a(href='/board/view/'+board.board_no)= board.board_title
+            a(href='/board/view?boardNo='+board.board_no)= board.board_title
           td= board.board_user
           td= board.board_date
 

@@ -4,9 +4,12 @@ html
     meta(charset='utf-8')
   include module/top
   body(class ="container")
-    h1
-      a(href='/list') LIST
-    ul
-      each board in boards
-        li
-          a(href='/board/view/'+board.board_no)= board.board_title
+    h2 VIEW
+
+    table(class='table')
+      tr
+        td(style='width:100px') 번호 #{board.board_no}
+        td 제목 #{board.board_title}
+      tr
+        td(colspan='2') 작성자 #{board.board_user}
+        td 날짜 #{board.board_date}

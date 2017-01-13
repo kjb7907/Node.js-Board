@@ -14,9 +14,29 @@ conn.connect(); //db연결
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false })); //body-Parser모듈 애플리케이션에 붙이는코드
 app.locals.pretty = true; //템플릿 엔진 코드 들여쓰기 적용
-app.use(express.static('public')); //uploads 폴더 매핑(정적파일위치지정)
+app.use('/board',express.static('public')); //uploads 폴더 매핑(정적파일위치지정)
 app.set('views', './views_board'); //템플릿엔진이 있는 디렉터리 명시
 app.set('view engine', 'jade'); //템플릿엔진 세팅 express 연결
+
+
+//글 상세페이지
+app.get('/board/view',function(req,res){
+  console.log('view');
+  var boardNo = req.query.boardNo;
+  if(boardNo){ //boardNo가 넘어왔다면
+    var selectSql = 'SELECT * FROM board WHERE board_no =?';
+
+    conn.query(selectSql,[boardNo],function(err,board,fields){
+      console.log(board);
+        if(err){
+          console.log(err);
+          res.status(500).send('Internal Server Error');
+        } else {
+          res.render('view',{board:board[0]});
+        }
+    });
+  }
+});
 
 //글목록
 app.get('/board/list', function(req, res){
@@ -54,11 +74,12 @@ app.get('/board/list', function(req, res){
   //글번호 & 글제목 가져오기
   var sql = 'SELECT board_no,board_title,board_user,+board_date FROM board ORDER BY board_no DESC LIMIT ?, ?';
   conn.query(sql,[beginRow,pagePerRow],function(err, boards, fields){ //쿼리문실행&쿼리문실행후 실행되는 콜백함수
+
       //자바스크립트 date 객체의 toLocaleString() 타입으로 날짜 출력을위해 배열안의 원소 수정
-      var date = boards[0].board_date;
       for(var i=0; i < boards.length ; i++){
+        var date = boards[i].board_date;
         boards[i].board_date = date.toLocaleString();
-      }
+      };
 
       //list에 필요한 객체및 변수 전달
       res.render('list', {boards:boards,currentPage:currentPage,lastPage:lastPage});
