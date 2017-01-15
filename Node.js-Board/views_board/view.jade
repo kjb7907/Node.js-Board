@@ -6,10 +6,31 @@ html
   body(class ="container")
     h2 VIEW
 
-    table(class='table')
+    table(class='well')
       tr
-        td(style='width:100px') 번호 #{board.board_no}
-        td 제목 #{board.board_title}
+        td(style='width:50px')
+          b No#{board.board_no}
+        td(style='width:400px')
+          b
+            제목 #{board.board_title}
+        td
+          b
+            작성일 #{board.board_date}
       tr
-        td(colspan='2') 작성자 #{board.board_user}
-        td 날짜 #{board.board_date}
+        td(colspan='3')
+          b
+            작성자 #{board.board_user}
+    table
+      tr
+        td
+          div(style='width:600px;height:300px')=board.board_content
+      tr
+        td(class="text-center")
+          span
+            a(href='#' class="btn btn-primary")수정
+          &nbsp;
+          span
+            a(href='#' class="btn btn-warning")삭제
+    br
+    br
+    br

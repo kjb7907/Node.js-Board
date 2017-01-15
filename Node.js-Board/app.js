@@ -27,7 +27,11 @@ app.get('/board/view',function(req,res){
     var selectSql = 'SELECT * FROM board WHERE board_no =?';
 
     conn.query(selectSql,[boardNo],function(err,board,fields){
-      console.log(board);
+
+      //날짜 형식 변경
+        var date = board[0].board_date;
+        board[0].board_date = date.toLocaleString();
+
         if(err){
           console.log(err);
           res.status(500).send('Internal Server Error');
@@ -79,7 +83,7 @@ app.get('/board/list', function(req, res){
       for(var i=0; i < boards.length ; i++){
         var date = boards[i].board_date;
         boards[i].board_date = date.toLocaleString();
-      };
+      }
 
       //list에 필요한 객체및 변수 전달
       res.render('list', {boards:boards,currentPage:currentPage,lastPage:lastPage});
