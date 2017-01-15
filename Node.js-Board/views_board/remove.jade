@@ -1,0 +1,12 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+  include module/top
+  body(class ="container")
+    h2 BOARD REMOVE
+    form(action='/board/remove?boardNo=#{boardNo}' method='post')
+      input(type='hidden' name='boardNo' value='#{boardNo}')
+      삭제비밀번호 입력
+      input(type=password name ='boardPw')
+      input(type='submit')

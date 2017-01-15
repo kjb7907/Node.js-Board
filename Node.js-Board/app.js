@@ -21,12 +21,13 @@ app.set('view engine', 'jade'); //템플릿엔진 세팅 express 연결
 
 //글입력 폼
 app.get('/board/add',function(req,res){
+  console.log('add form');
   res.render('add');
 });
 
 //글입력 처리
 app.post('/board/add',function(req,res){
-  console.log('insert');
+  console.log('add process');
   //넘어온 값 받기
   var boardTitle = req.body.boardTitle;
   var boardContent = req.body.boardContent;
@@ -114,6 +115,88 @@ app.get('/board/list', function(req, res){
 
       //list에 필요한 객체및 변수 전달
       res.render('list', {boards:boards,currentPage:currentPage,lastPage:lastPage});
+  });
+});
+
+//글수정 폼
+app.get('/board/modify',function(req,res){
+  console.log('modify form');
+  var boardNo = req.query.boardNo;
+  if(boardNo){
+    var sql = 'SELECT * FROM board WHERE board_no=?';
+    conn.query(sql, [boardNo], function(err, board, fields){
+      if(err){
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+      } else {
+        res.render('modify', {board:board[0]});
+      }
+    });
+  } else {
+    console.log('There is no id.');
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+//글 수정 처리
+app.post('/board/modify',function(req,res){
+  console.log('modify process');
+
+  var boardTitle = req.body.boardTitle;
+  var boardContent = req.body.boardContent;
+  var boardUser = req.body.boardUser;
+  var boardPw = req.body.boardPw;
+  var boardNo = req.body.boardNo;
+
+  var sql = 'UPDATE board SET board_title=?, board_content=?, board_User=? WHERE board_no=?&&board_pw=?';
+  conn.query(sql, [boardTitle, boardContent, boardUser, boardNo,boardPw], function(err, result, fields){
+    console.log(result);
+
+    if(err){
+      console.log(err);
+      res.status(500).send('Internal Server Error');
+    } else {
+        if(result.changedRows==0){  //수정성공여부판단
+          res.redirect('/board/modify?boardNo='+boardNo);  //실패시 수정화면
+        } else {
+          res.redirect('/board/view?boardNo='+boardNo); //성공시뷰페이지
+        }
+    }
+  });
+});
+
+//글 삭제비밀번호입력 폼
+app.get('/board/remove',function(req,res){
+  console.log('remove form');
+  var boardNo = req.query.boardNo;
+  if(boardNo){
+        res.render('remove', {boardNo:boardNo});
+  } else {
+    console.log('There is no id.');
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+//글삭제 처리
+app.post('/board/remove',function(req,res){
+  console.log('remove process');
+  var boardPw = req.body.boardPw;
+  var boardNo = req.body.boardNo;
+
+  var sql = 'DELETE FROM board WHERE board_no=?&&board_pw=?';
+  conn.query(sql, [boardNo,boardPw], function(err, result, fields){
+    console.log(result);
+
+    if(err){
+      console.log(err);
+      res.status(500).send('Internal Server Error');
+    } else {
+        if(result.affectedRows==0){  //삭제성공여부판단
+          res.redirect('/board/remove?boardNo='+boardNo);  //실패시 삭제화면
+        } else {
+          res.redirect('/board/list'); //성공시리스트
+        }
+    }
   });
 });
 

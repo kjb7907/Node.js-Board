@@ -27,10 +27,10 @@ html
       tr
         td(class="text-center")
           span
-            a(href='#' class="btn btn-primary")수정
+            a(href='/board/modify?boardNo=#{board.board_no}' class="btn btn-primary")수정
           &nbsp;
           span
-            a(href='#' class="btn btn-warning")삭제
+            a(href='/board/remove?boardNo=#{board.board_no}' class="btn btn-warning")삭제
     br
     br
     br
