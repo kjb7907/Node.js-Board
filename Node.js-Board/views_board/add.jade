@@ -1,0 +1,31 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+  include module/top
+  body(class ="container")
+    h2 BOARD ADD
+    form(action='/board/add' method='post')
+      table
+        tr
+          td(style='padding:10px') 제목
+          td(colspan='3')
+            input(type='text' style="width:600px" name="boardTitle")
+        tr
+          td(style='padding:10px') 작성자
+          td
+            input(type='text' name="boardUser")
+          td(style='padding:10px') 비밀번호&nbsp;
+          td
+            input(type='password' name="boardPw")
+        tr
+          td(style='padding:10px') 본문
+          td(colspan='3')
+            textarea(class="form-control" cols='70' rows='8' name="boardContent")
+        tr
+          td(colspan ='4' class="text-center" style='padding:10px')
+            span
+              input(type='submit' value='등록' class="btn btn-primary")
+            &nbsp;
+            span
+              input(type='reset'  class="btn btn-warning")

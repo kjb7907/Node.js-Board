@@ -19,10 +19,37 @@ app.set('views', './views_board'); //템플릿엔진이 있는 디렉터리 명�
 app.set('view engine', 'jade'); //템플릿엔진 세팅 express 연결
 
 
+//글입력 폼
+app.get('/board/add',function(req,res){
+  res.render('add');
+});
+
+//글입력 처리
+app.post('/board/add',function(req,res){
+  console.log('insert');
+  //넘어온 값 받기
+  var boardTitle = req.body.boardTitle;
+  var boardContent = req.body.boardContent;
+  var boardUser = req.body.boardUser;
+  var boardPw = req.body.boardPw;
+
+  //insert 작업
+  var sql = 'INSERT INTO board (board_title, board_content,board_User, board_pw,board_date) VALUES(?, ?, ?, ?, now())';
+  conn.query(sql, [boardTitle, boardContent,boardUser, boardPw], function(err, result, fields){
+    if(err){
+      console.log(err);
+      res.status(500).send('Internal Server Error');
+    } else {
+      res.redirect('/board/view?boardNo='+result.insertId);
+    }
+  });
+});
+
 //글 상세페이지
-app.get('/board/view',function(req,res){
+app.get('/board/view',function(req,res){ //시맨틱url적용
   console.log('view');
   var boardNo = req.query.boardNo;
+  console.log('boardNo : '+boardNo);
   if(boardNo){ //boardNo가 넘어왔다면
     var selectSql = 'SELECT * FROM board WHERE board_no =?';
 
